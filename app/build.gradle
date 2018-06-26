@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.RonnyLV'
@@ -6,7 +6,6 @@ group='com.github.RonnyLV'
 android {
     compileSdkVersion 22
     defaultConfig {
-        applicationId "com.nolanlawson.logcat"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1

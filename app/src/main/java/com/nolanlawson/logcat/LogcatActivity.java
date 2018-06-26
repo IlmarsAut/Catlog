@@ -394,43 +394,42 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        
-        switch (item.getItemId()) {
-        case R.id.menu_log_level:
+
+        int i = item.getItemId();
+        if (i == R.id.menu_log_level) {
             showLogLevelDialog();
             return true;
-        case R.id.menu_open_log:
+        } else if (i == R.id.menu_open_log) {
             showOpenLogDialog();
             return true;
-        case R.id.menu_save_log:
-        case R.id.menu_save_as_log:
+        } else if (i == R.id.menu_save_log || i == R.id.menu_save_as_log) {
             showSaveLogDialog();
             return true;
-        case R.id.menu_record_log:
+        } else if (i == R.id.menu_record_log) {
             showRecordLogDialog();
             return true;
-        case R.id.menu_stop_recording_log:
+        } else if (i == R.id.menu_stop_recording_log) {
             DialogHelper.stopRecordingLog(this);
-            return true;            
-        case R.id.menu_send_log:
+            return true;
+        } else if (i == R.id.menu_send_log) {
             showSendLogDialog();
             return true;
-        case R.id.menu_main_log:
+        } else if (i == R.id.menu_main_log) {
             startUpMainLog();
             return true;
-        case R.id.menu_delete_saved_log:
+        } else if (i == R.id.menu_delete_saved_log) {
             startDeleteSavedLogsDialog();
             return true;
-        case R.id.menu_settings:
+        } else if (i == R.id.menu_settings) {
             startSettingsActivity();
             return true;
-        case R.id.menu_crazy_logger_service:
+        } else if (i == R.id.menu_crazy_logger_service) {
             ServiceHelper.startOrStopCrazyLogger(this);
             return true;
-        case R.id.menu_partial_select:
+        } else if (i == R.id.menu_partial_select) {
             startPartialSelectMode();
             return true;
-        case R.id.menu_filters:
+        } else if (i == R.id.menu_filters) {
             showFiltersDialog();
             return true;
         }
@@ -1685,31 +1684,31 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()) {
-            case R.id.main_edit_text:
-                if (searchEditText != null && searchEditText.length() > 0) {
-                    // I think it's intuitive to click an edit text and have all the text selected
-                    searchEditText.setSelection(0, searchEditText.length());
-                }
-                break;
-            case R.id.main_clear_button:
-                unfocusEditText();
-                if (adapter != null) {
-                    adapter.clear();
-                }
-                if (searchEditText != null) {
-                    searchEditText.setText("");
-                }
-                Toast.makeText(this, R.string.log_cleared, Toast.LENGTH_LONG).show();
-                break;
-            case R.id.main_more_button:
-                unfocusEditText();
-                expandOrCollapseAll(true);
-                break;
-            case R.id.main_pause_button:
-                unfocusEditText();
-                pauseOrUnpause();
-                break;
+        int i = v.getId();
+        if (i == R.id.main_edit_text) {
+            if (searchEditText != null && searchEditText.length() > 0) {
+                // I think it's intuitive to click an edit text and have all the text selected
+                searchEditText.setSelection(0, searchEditText.length());
+            }
+
+        } else if (i == R.id.main_clear_button) {
+            unfocusEditText();
+            if (adapter != null) {
+                adapter.clear();
+            }
+            if (searchEditText != null) {
+                searchEditText.setText("");
+            }
+            Toast.makeText(this, R.string.log_cleared, Toast.LENGTH_LONG).show();
+
+        } else if (i == R.id.main_more_button) {
+            unfocusEditText();
+            expandOrCollapseAll(true);
+
+        } else if (i == R.id.main_pause_button) {
+            unfocusEditText();
+            pauseOrUnpause();
+
         }
         
     }
