@@ -39,7 +39,7 @@ public class SaveLogHelper {
 	public static final String TEMP_ZIP_FILENAME = "logcat_and_device_info.zip";
 	
 	private static final String LEGACY_SAVED_LOGS_DIR = "catlog_saved_logs";
-	private static final String CATLOG_DIR = "catlog";
+	private static final String CATLOG_DIR = "Download/catlog";
 	private static final String SAVED_LOGS_DIR = "saved_logs";
 	private static final String TMP_DIR = "tmp";
 	
