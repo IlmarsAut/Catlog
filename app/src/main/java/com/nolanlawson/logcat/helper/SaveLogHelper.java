@@ -39,7 +39,7 @@ public class SaveLogHelper {
 	public static final String TEMP_ZIP_FILENAME = "logcat_and_device_info.zip";
 	
 	private static final String LEGACY_SAVED_LOGS_DIR = "catlog_saved_logs";
-	private static final String CATLOG_DIR = "Download/catlog";
+	private static final String CATLOG_DIR = "catlog";
 	private static final String SAVED_LOGS_DIR = "saved_logs";
 	private static final String TMP_DIR = "tmp";
 	
@@ -86,7 +86,7 @@ public class SaveLogHelper {
 	}
 	public static boolean checkIfSdCardExists() {
 		
-		File sdcardDir = Environment.getExternalStorageDirectory();
+		File sdcardDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 			
 		return sdcardDir != null && sdcardDir.listFiles() != null;
 		
@@ -278,7 +278,7 @@ public class SaveLogHelper {
 	}
 
 	private static File getCatlogDirectory() {
-		File sdcardDir = Environment.getExternalStorageDirectory();
+		File sdcardDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 		
 		File catlogDir = new File(sdcardDir, CATLOG_DIR);
 		
@@ -296,7 +296,7 @@ public class SaveLogHelper {
 	 * @param savedLogsDir
 	 */
 	public static synchronized void moveLogsFromLegacyDirIfNecessary() {
-		File sdcardDir = Environment.getExternalStorageDirectory();
+		File sdcardDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 		File legacyDir = new File(sdcardDir, LEGACY_SAVED_LOGS_DIR);
 		
 		
@@ -310,7 +310,7 @@ public class SaveLogHelper {
 	}
 	
 	public static boolean legacySavedLogsDirExists() {
-		File sdcardDir = Environment.getExternalStorageDirectory();
+		File sdcardDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 		File legacyDir = new File(sdcardDir, LEGACY_SAVED_LOGS_DIR);
 		
 		return legacyDir.exists() && legacyDir.isDirectory();
