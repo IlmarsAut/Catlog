@@ -1,14 +1,5 @@
 package com.nolanlawson.logcat;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
@@ -82,7 +73,16 @@ import com.nolanlawson.logcat.util.ArrayUtil;
 import com.nolanlawson.logcat.util.LogLineAdapterUtil;
 import com.nolanlawson.logcat.util.StringUtil;
 import com.nolanlawson.logcat.util.UtilLogger;
+
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class LogcatActivity extends ListActivity implements TextWatcher, OnScrollListener, 
         FilterListener, OnEditorActionListener, OnClickListener, OnLongClickListener {
@@ -100,8 +100,8 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
   private static final int CONTEXT_MENU_COPY_ID = 1;
     
     private static UtilLogger log = new UtilLogger(LogcatActivity.class);
-    
-    private View backgroundLayout, mainFilenameLayout, clearButton, expandButton, pauseButton;
+
+    private View backgroundLayout, mainFilenameLayout, clearButton, expandButton, pauseButton, mainSettingsButton;
     private AutoCompleteTextView searchEditText;
     private ProgressBar darkProgressBar, lightProgressBar;
     private LogLineAdapter adapter;
@@ -121,7 +121,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
     private String currentlyOpenLog = null;
     
     private Handler handler = new Handler(Looper.getMainLooper());
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -819,8 +819,8 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
         if (!SaveLogHelper.checkSdCard(this)) {
             return;
         }
-        
-        List<CharSequence> filenames = new ArrayList<CharSequence>(SaveLogHelper.getLogFilenames());
+
+        List<CharSequence> filenames = new ArrayList<CharSequence>(SaveLogHelper.getLogFilenames(this));
         
         if (filenames.isEmpty()) {
             Toast.makeText(this, R.string.no_saved_logs, Toast.LENGTH_SHORT).show();
@@ -906,7 +906,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
                     
                     for (int i = 0; i < checkedItems.length; i++) {
                         if (checkedItems[i]) {
-                            SaveLogHelper.deleteLogIfExists(filenameArray[i].toString());
+                            SaveLogHelper.deleteLogIfExists(LogcatActivity.this, filenameArray[i].toString());
                         }
                     }
                     
@@ -1040,7 +1040,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
         
         if (!asText) {
             if (currentlyOpenLog != null) { // use saved log file
-                files.add(SaveLogHelper.getFile(currentlyOpenLog));
+                files.add(SaveLogHelper.getFile(this, currentlyOpenLog));
             } else { // create a temp file to hold the current, unsaved log
                 File tempLogFile = SaveLogHelper.saveTemporaryFile(this, 
                         SaveLogHelper.TEMP_LOG_FILENAME, null, getCurrentLogAsListOfStrings());
@@ -1079,8 +1079,8 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
             sendLogDetails.setAttachment(files.get(0));
             break;
         default: // 2 files - need to zip them up
-            File zipFile = SaveLogHelper.saveTemporaryZipFile(SaveLogHelper.TEMP_ZIP_FILENAME, files);
-            File tmpDirectory = SaveLogHelper.getTempDirectory();
+            File zipFile = SaveLogHelper.saveTemporaryZipFile(this, SaveLogHelper.TEMP_ZIP_FILENAME, files);
+            File tmpDirectory = SaveLogHelper.getTempDirectory(this);
             for (File file : files) {
                 // delete original files
                 if (file.getParentFile().equals(tmpDirectory)) { // only delete temporary files
@@ -1177,8 +1177,8 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
 
             @Override
             protected Boolean doInBackground(Void... params) {
-                SaveLogHelper.deleteLogIfExists(filename);
-                return SaveLogHelper.saveLog(logLines, filename);
+                SaveLogHelper.deleteLogIfExists(LogcatActivity.this, filename);
+                return SaveLogHelper.saveLog(LogcatActivity.this, logLines, filename);
                 
             }
 
@@ -1214,8 +1214,8 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
 
             @Override
             protected Boolean doInBackground(Void... params) {
-                SaveLogHelper.deleteLogIfExists(filename);
-                return SaveLogHelper.saveLog(logLines, filename);
+                SaveLogHelper.deleteLogIfExists(LogcatActivity.this, filename);
+                return SaveLogHelper.saveLog(LogcatActivity.this, logLines, filename);
                 
             }
 
@@ -1244,8 +1244,8 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
         if (!SaveLogHelper.checkSdCard(this)) {
             return;
         }
-        
-        final List<CharSequence> filenames = new ArrayList<CharSequence>(SaveLogHelper.getLogFilenames());
+
+        final List<CharSequence> filenames = new ArrayList<CharSequence>(SaveLogHelper.getLogFilenames(this));
         
         if (filenames.isEmpty()) {
             Toast.makeText(this, R.string.no_saved_logs, Toast.LENGTH_SHORT).show();
@@ -1296,7 +1296,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
 
                 // remove any lines at the beginning if necessary
                 final int maxLines = PreferenceHelper.getDisplayLimitPreference(LogcatActivity.this);
-                SavedLog savedLog = SaveLogHelper.openLog(filename, maxLines);
+                SavedLog savedLog = SaveLogHelper.openLog(LogcatActivity.this, filename, maxLines);
                 List<String> lines = savedLog.getLogLines();
                 List<LogLine> logLines = new ArrayList<LogLine>();
                 for (String line : lines) {

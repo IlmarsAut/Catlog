@@ -49,7 +49,7 @@ public class SaveLogHelper {
 		PrintStream out = null;
 		try {
 			
-			File tempFile = new File(getTempDirectory(), filename);
+			File tempFile = new File(getTempDirectory(context), filename);
 			
 			// specifying BUFFER gets rid of an annoying warning message
 			out = new PrintStream(new BufferedOutputStream(new FileOutputStream(tempFile, false), BUFFER));
@@ -85,25 +85,21 @@ public class SaveLogHelper {
 		return result;
 	}
 	public static boolean checkIfSdCardExists() {
-		
-		File sdcardDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-			
-		return sdcardDir != null && sdcardDir.listFiles() != null;
-		
+		return true;
 	}
 	
-	public static File getFile(String filename) {
+	public static File getFile(Context context, String filename) {
 		
-		File catlogDir = getSavedLogsDirectory();
+		File catlogDir = getSavedLogsDirectory(context);
 		
 		File file = new File(catlogDir, filename);
 	
 		return file;
 	}
 	
-	public static void deleteLogIfExists(String filename) {
+	public static void deleteLogIfExists(Context context, String filename) {
 		
-		File catlogDir = getSavedLogsDirectory();
+		File catlogDir = getSavedLogsDirectory(context);
 		
 		File file = new File(catlogDir, filename);
 		
@@ -113,9 +109,9 @@ public class SaveLogHelper {
 		
 	}
 	
-	public static Date getLastModifiedDate(String filename) {
+	public static Date getLastModifiedDate(Context context, String filename) {
 		
-		File catlogDir = getSavedLogsDirectory();
+		File catlogDir = getSavedLogsDirectory(context);
 		
 		File file = new File(catlogDir, filename);
 		
@@ -132,9 +128,9 @@ public class SaveLogHelper {
 	 * Get all the log filenames, order by last modified descending
 	 * @return
 	 */
-	public static List<String> getLogFilenames() {
+	public static List<String> getLogFilenames(Context context) {
 		
-		File catlogDir = getSavedLogsDirectory();
+		File catlogDir = getSavedLogsDirectory(context);
 		
 		File[] filesArray = catlogDir.listFiles();
 		
@@ -161,9 +157,9 @@ public class SaveLogHelper {
 		
 	}
 	
-	public static SavedLog openLog(String filename, int maxLines) {
+	public static SavedLog openLog(Context context, String filename, int maxLines) {
 		
-		File catlogDir = getSavedLogsDirectory();
+		File catlogDir = getSavedLogsDirectory(context);
 		File logFile = new File(catlogDir, filename);	
 		
 		LinkedList<String> logLines = new LinkedList<String>();
@@ -202,17 +198,17 @@ public class SaveLogHelper {
 		return result;
 	}
 	
-	public static synchronized boolean saveLog(CharSequence logString, String filename) {
-		return saveLog(null, logString, filename);
+	public static synchronized boolean saveLog(Context context, CharSequence logString, String filename) {
+		return saveLog(context, null, logString, filename);
 	}
 	
-	public static synchronized boolean saveLog(List<CharSequence> logLines, String filename) {
-		return saveLog(logLines, null, filename);
+	public static synchronized boolean saveLog(Context context, List<CharSequence> logLines, String filename) {
+		return saveLog(context, logLines, null, filename);
 	}
 	
-	private static boolean saveLog(List<CharSequence> logLines, CharSequence logString, String filename) {
+	private static boolean saveLog(Context context, List<CharSequence> logLines, CharSequence logString, String filename) {
 		
-		File catlogDir = getSavedLogsDirectory();
+		File catlogDir = getSavedLogsDirectory(context);
 		
 		File newFile = new File(catlogDir, filename);
 		try {
@@ -252,8 +248,8 @@ public class SaveLogHelper {
 		
 	}
 	
-	public static File getTempDirectory() {
-		File catlogDir = getCatlogDirectory();
+	public static File getTempDirectory(Context context) {
+		File catlogDir = getCatlogDirectory(context);
 		
 		File tmpDir = new File(catlogDir, TMP_DIR);
 		
@@ -264,8 +260,8 @@ public class SaveLogHelper {
 		return tmpDir;
 	}
 	
-	private static File getSavedLogsDirectory() {
-		File catlogDir = getCatlogDirectory();
+	private static File getSavedLogsDirectory(Context context) {
+		File catlogDir = getCatlogDirectory(context);
 		
 		File savedLogsDir = new File(catlogDir, SAVED_LOGS_DIR);
 		
@@ -277,8 +273,8 @@ public class SaveLogHelper {
 		
 	}
 
-	private static File getCatlogDirectory() {
-		File sdcardDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+	private static File getCatlogDirectory(Context context) {
+		File sdcardDir = context.getFilesDir();
 		
 		File catlogDir = new File(sdcardDir, CATLOG_DIR);
 		
@@ -301,7 +297,7 @@ public class SaveLogHelper {
 		
 		
 		if (legacyDir.exists() && legacyDir.isDirectory()) {
-			File savedLogsDir = getSavedLogsDirectory();
+			File savedLogsDir = getSavedLogsDirectory(null);
 			for (File file : legacyDir.listFiles()) {
 				file.renameTo(new File(savedLogsDir, file.getName()));
 			}
@@ -316,17 +312,17 @@ public class SaveLogHelper {
 		return legacyDir.exists() && legacyDir.isDirectory();
 	}
 	
-	public static File saveTemporaryZipFile(String filename, List<File> files) {
+	public static File saveTemporaryZipFile(Context context, String filename, List<File> files) {
 		try {
-			return saveTemporaryZipFileAndThrow(filename, files);
+			return saveTemporaryZipFileAndThrow(context, filename, files);
 		} catch (IOException e) {
 			log.e(e, "unexpected error");
 		}
 		return null;
 	}
 	
-	private static File saveTemporaryZipFileAndThrow(String filename, List<File> files) throws IOException {
-		File zipFile = new File(getTempDirectory(), filename);
+	private static File saveTemporaryZipFileAndThrow(Context context, String filename, List<File> files) throws IOException {
+		File zipFile = new File(getTempDirectory(context), filename);
 
 		ZipOutputStream output = null;
 		try {

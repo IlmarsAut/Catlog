@@ -1,10 +1,5 @@
 package com.nolanlawson.logcat;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Random;
-
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -16,7 +11,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.nolanlawson.logcat.data.LogLine;
@@ -30,6 +24,11 @@ import com.nolanlawson.logcat.reader.LogcatReaderLoader;
 import com.nolanlawson.logcat.util.ArrayUtil;
 import com.nolanlawson.logcat.util.LogLineAdapterUtil;
 import com.nolanlawson.logcat.util.UtilLogger;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Random;
 
 /**
  * Reads logs.
@@ -277,8 +276,8 @@ public class LogcatRecordingService extends IntentService {
 		
 		boolean searchCriteriaWillAlwaysMatch = searchCriteria.isEmpty();
 		boolean logLevelAcceptsEverything = logLevelLimit == 0;
-		
-		SaveLogHelper.deleteLogIfExists(filename);
+
+		SaveLogHelper.deleteLogIfExists(this, filename);
 		
 		initializeReader(intent);
 		
@@ -302,7 +301,7 @@ public class LogcatRecordingService extends IntentService {
 				
 				if (++lineCount % logLinePeriod == 0) {
 					// avoid OutOfMemoryErrors; flush now
-					SaveLogHelper.saveLog(stringBuilder, filename);
+					SaveLogHelper.saveLog(this, stringBuilder, filename);
 					stringBuilder.delete(0, stringBuilder.length()); // clear
 				}
 			}
@@ -311,8 +310,8 @@ public class LogcatRecordingService extends IntentService {
 		} finally {
 			killProcess();
 			log.d("CatlogService ended");
-			
-			boolean logSaved = SaveLogHelper.saveLog(stringBuilder, filename);
+
+			boolean logSaved = SaveLogHelper.saveLog(this, stringBuilder, filename);
 			
 			if (logSaved) {
 				makeToast(R.string.log_saved, Toast.LENGTH_SHORT);

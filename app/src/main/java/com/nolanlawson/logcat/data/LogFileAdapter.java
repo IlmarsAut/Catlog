@@ -24,6 +24,8 @@ public class LogFileAdapter extends ArrayAdapter<CharSequence> {
 	private boolean multiMode;
 	private boolean[] checkedItems;
 	private int resId;
+
+	private Context context;
 	
 	public LogFileAdapter(Context context, List<CharSequence> objects, int checked, boolean multiMode) {
 		
@@ -31,6 +33,7 @@ public class LogFileAdapter extends ArrayAdapter<CharSequence> {
 		this.objects = objects;
 		this.checked = checked;
 		this.multiMode = multiMode;
+		this.context = context;
 		if (multiMode) {
 			checkedItems = new boolean[objects.size()];
 		}
@@ -61,7 +64,7 @@ public class LogFileAdapter extends ArrayAdapter<CharSequence> {
 			text1.setChecked(checked == position);
 		}
 		
-		Date lastModified = SaveLogHelper.getLastModifiedDate(filename.toString());
+		Date lastModified = SaveLogHelper.getLastModifiedDate(this.context, filename.toString());
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(USER_READABLE_DATE_FORMAT);
 		
 		text2.setText(simpleDateFormat.format(lastModified));
