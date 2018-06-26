@@ -68,7 +68,7 @@ public class DialogHelper {
 				}
 			}
 		}
-		.execute((Void)null);
+		.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		
 	}
 	

@@ -81,7 +81,7 @@ public class MultipleLogcatReader extends AbsLogcatReader {
 				queue.offer(DUMMY_NULL);
 				return null;
 			}
-		}.execute((Void)null);
+		}.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 	
 	

@@ -83,6 +83,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class LogcatActivity extends ListActivity implements TextWatcher, OnScrollListener, 
         FilterListener, OnEditorActionListener, OnClickListener, OnLongClickListener {
@@ -170,7 +171,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
                 }
                 
                 
-            }.execute((Void)null);
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             
         } else {
             showInitialMessageAndStartupLog();
@@ -346,7 +347,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
                     adapter.clear();
                 }
                 task = new LogReaderAsyncTask();
-                task.execute((Void)null);
+                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         };
         
@@ -634,7 +635,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
             
             
             
-        }.execute((Void)null);
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
     
     private void showAddFilterDialog(final FilterAdapter filterAdapter) {
@@ -697,7 +698,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
     protected void handleNewFilterText(String text, final FilterAdapter filterAdapter) {
         final String  trimmed = text.trim();
         if (!TextUtils.isEmpty(trimmed)) {
-            
+
             new AsyncTask<Void, Void, FilterItem>(){
 
                 @Override
@@ -706,8 +707,8 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
                     try {
                         dbHelper = new CatlogDBHelper(LogcatActivity.this);
                         return dbHelper.addFilter(trimmed);
-                        
-                                                    
+
+
                     } finally {
                         if (dbHelper != null) {
                             dbHelper.close();
@@ -718,16 +719,16 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
                 @Override
                 protected void onPostExecute(FilterItem filterItem) {
                     super.onPostExecute(filterItem);
-                    
+
                     if (filterItem != null) { // null indicates duplicate
                         filterAdapter.add(filterItem);
                         filterAdapter.sort(FilterItem.DEFAULT_COMPARATOR);
                         filterAdapter.notifyDataSetChanged();
-                        
+
                         addToAutocompleteSuggestions(trimmed);
                     }
                 }
-            }.execute((Void)null);
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -1200,7 +1201,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
             
         };
         
-        saveTask.execute((Void)null);
+        saveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         
     }
 
@@ -1235,7 +1236,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
             
         };
         
-        saveTask.execute((Void)null);
+        saveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         
     }
 
@@ -1339,7 +1340,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
 
                 @Override
                 public void run() {
-                    openFileTask.execute((Void)null);
+                    openFileTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     
                 }});
             task.unpause();
@@ -1347,7 +1348,7 @@ public class LogcatActivity extends ListActivity implements TextWatcher, OnScrol
             task = null;
         } else {
             // main log not running; just open in this thread
-            openFileTask.execute((Void)null);
+            openFileTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         
         
