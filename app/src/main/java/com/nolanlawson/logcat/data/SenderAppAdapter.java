@@ -172,7 +172,10 @@ public class SenderAppAdapter extends ArrayAdapter<ResolveInfo> {
 			actionSendIntent.putExtra(Intent.EXTRA_TEXT, body);
 		}
 		if (attachment != null) {
-			Uri uri = Uri.fromFile(attachment);
+			Uri uri = FileProvider.getUriForFile(
+					MainActivity.this,
+					"lv.nordea.android", //(use your app signature + ".provider" )
+					attachment);
 			log.d("uri is: %s", uri);
 			actionSendIntent.putExtra(Intent.EXTRA_STREAM, uri);
 		}
